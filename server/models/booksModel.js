@@ -48,8 +48,23 @@ const insertBook = async (book) => {
     return db.one(query, [title, authorId, publishDate]).catch(e => console.log(e))
   }
   catch (e) {
-    console.log(e)
   }
 }
 
-module.exports = { getBooksByParams, insertBook }
+
+/**
+ * Remove book from bd
+ * @param {number} id - book's id
+ */
+const removeBook = async (id) => {
+  const query = 'delete from books where id=${id}'
+  try {
+    return db.none(query, {
+      id
+    })
+  } catch (e) {
+    return e
+  }
+}
+
+module.exports = { getBooksByParams, insertBook, removeBook }

@@ -52,4 +52,20 @@ const insertAuthor = async (author) => {
   }
 }
 
-module.exports = { getAuthorsByParams, insertAuthor }
+/**
+ * Remove author from db
+ * @param {number} id - author's id
+ */
+const removeAuthor = async (id) => {
+  const query = 'delete from authors where id=${id}'
+  try {
+    return db.none(query, {
+      id
+    })
+  }
+  catch (e) {
+
+  }
+}
+
+module.exports = { getAuthorsByParams, insertAuthor, removeAuthor }

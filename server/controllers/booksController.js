@@ -1,4 +1,4 @@
-const { getBooksByParams, insertBook } = require("../models/booksModel");
+const { getBooksByParams, insertBook, removeBook } = require("../models/booksModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
@@ -54,4 +54,21 @@ const createBook = catchAsync(async (req, res, next) => {
   });
 });
 
-module.exports = { getBooksById, getBooks, createBook }
+const deleteBook = catchAsync(async (req, res, next) => {
+  const { id } = req.body;
+
+  const book = await getBooksByParams({ id })
+
+  if (book.length === 0) {
+    return next(new AppError("There is no book with this id", 500))
+  }
+
+  await removeBook(id);
+
+  return res.status(200).send({
+    status: "success",
+    message: "Record deleted successfully"
+  })
+})
+
+module.exports = { getBooksById, getBooks, createBook, deleteBook }

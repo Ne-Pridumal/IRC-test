@@ -1,4 +1,4 @@
-const { getAuthorsByParams, insertAuthor } = require("../models/authorsModel");
+const { getAuthorsByParams, insertAuthor, removeAuthor } = require("../models/authorsModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
@@ -56,4 +56,21 @@ const createAuthor = catchAsync(async (req, res, next) => {
   })
 })
 
-module.exports = { getAuthors, getAuthorById, createAuthor }
+const deleteAuthor = catchAsync(async (req, res, next) => {
+  const { id } = req.body;
+
+  const author = await getAuthorsByParams({ id })
+
+  if (author.length === 0) {
+    return next(new AppError("There is no author with this id", 500))
+  }
+
+  await removeAuthor(id)
+
+  return res.status(200).send({
+    status: "success",
+    message: "Record deleted successfully"
+  })
+})
+
+module.exports = { getAuthors, getAuthorById, createAuthor, deleteAuthor }
