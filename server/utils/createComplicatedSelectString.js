@@ -1,3 +1,4 @@
+'use strict';
 
 /**
  * Generate long query string for optional parameters.

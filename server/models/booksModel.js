@@ -35,16 +35,21 @@ const getBooksByParams = async (params) => {
 
 /**
  * Create new book in db
- * @param {object} book - book object.
+ * @param {object} book - book object
  * @param {string} book.title - book title field
  * @param {number} book.authorId - book's author
- * @param {date} book.publishYear - book's publish year
+ * @param {date} book.publishDate - book's publish year
+ * @returns {Promise<number>} - created book id
  */
-const createBook = ({
-  title,
-  authorId,
-  publishYear
-}) => {
+const insertBook = async (book) => {
+  const { title, authorId, publishDate } = book
+  const query = 'insert into books(title, author_id, creation_date) values($1, $2, $3) returning id'
+  try {
+    return db.one(query, [title, authorId, publishDate]).catch(e => console.log(e))
+  }
+  catch (e) {
+    console.log(e)
+  }
 }
 
-module.exports = getBooksByParams
+module.exports = { getBooksByParams, insertBook }

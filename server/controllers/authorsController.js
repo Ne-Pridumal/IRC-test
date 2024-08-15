@@ -1,4 +1,4 @@
-const getAuthorsByParams = require("../models/authorsModel");
+const { getAuthorsByParams, insertAuthor } = require("../models/authorsModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
@@ -36,4 +36,24 @@ const getAuthors = catchAsync(async (req, res, next) => {
   })
 })
 
-module.exports = { getAuthors, getAuthorById }
+const createAuthor = catchAsync(async (req, res, next) => {
+  const { name, surname, birthday, age } = req.body;
+
+  const id = await insertAuthor({
+    name,
+    surname,
+    birthday,
+    age
+  });
+
+  if (!id) {
+    return next(new AppError("Couldn't create author", 500));
+  }
+
+  return res.status(200).send({
+    status: "success",
+    data: id
+  })
+})
+
+module.exports = { getAuthors, getAuthorById, createAuthor }

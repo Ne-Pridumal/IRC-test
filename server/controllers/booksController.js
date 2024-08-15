@@ -1,10 +1,11 @@
-const getBooksByParams = require("../models/booksModel");
+const { getBooksByParams, insertBook } = require("../models/booksModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
+
 const getBooksById = catchAsync(async (req, res, next) => {
-  const { id } = req.params
-  const books = await getBooksByParams({ id })
+  const { id } = req.params;
+  const books = await getBooksByParams({ id });
 
   if (!books) {
     return next(new AppError('Invalid book id', 500));
@@ -13,8 +14,8 @@ const getBooksById = catchAsync(async (req, res, next) => {
   return res.status(200).send({
     status: 'success',
     data: books,
-  })
-})
+  });
+});
 
 const getBooks = catchAsync(async (req, res, next) => {
   const { title, authorId, publishYear } = req.query;
@@ -33,6 +34,24 @@ const getBooks = catchAsync(async (req, res, next) => {
     status: "success",
     data: books
   });
-})
+});
 
-module.exports = { getBooksById, getBooks }
+const createBook = catchAsync(async (req, res, next) => {
+  const { title, authorId, publishDate } = req.body;
+  const id = await insertBook({
+    title,
+    authorId,
+    publishDate,
+  });
+
+  if (!id) {
+    return next(new AppError("Couldn't create book", 500));
+  }
+
+  return res.status(200).send({
+    status: "success",
+    data: id
+  });
+});
+
+module.exports = { getBooksById, getBooks, createBook }

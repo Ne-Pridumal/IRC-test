@@ -26,12 +26,30 @@ const getAuthorsByParams = async (params) => {
     }
     let query = selectedField
     query += createCompicatedQuerySelectString(paramsCommands, params)
-    console.log(query)
     return db.any(query, params)
   }
   catch (e) {
-    console.log(e)
   }
 }
 
-module.exports = getAuthorsByParams
+/**
+ * Create new author in db
+ * @param {object} author - author object
+ * @param {string} author.name - author's name
+ * @param {string} author.surname - author's surnmae, if exists
+ * @param {date} author.birthday - author's birthday date
+ * @param {number} author.age - author's age
+ * @returns {Promise<number>} - created author id
+ */
+const insertAuthor = async (author) => {
+  const query = "insert into authors(name, surname, birthday, age) values($1,$2,$3,$4) returning id";
+  const { name, age, surname, birthday } = author
+  try {
+    return db.one(query, [name, surname, birthday, age])
+  }
+  catch (e) {
+
+  }
+}
+
+module.exports = { getAuthorsByParams, insertAuthor }
