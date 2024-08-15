@@ -1,4 +1,4 @@
-const { getAuthorsByParams, insertAuthor, removeAuthor } = require("../models/authorsModel");
+const { getAuthorsByParams, insertAuthor, removeAuthor, updateAuthor } = require("../models/authorsModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
@@ -7,7 +7,7 @@ const getAuthorById = catchAsync(async (req, res, next) => {
   const authors = await getAuthorsByParams({ id })
 
   if (!authors) {
-    return next(new AppError("Invalid author id", 500))
+    return next(new AppError("Invalid author id", 400))
   }
 
   return res.status(200).send({
@@ -17,18 +17,16 @@ const getAuthorById = catchAsync(async (req, res, next) => {
 })
 
 const getAuthors = catchAsync(async (req, res, next) => {
-  const { name, surname, birthdayYear: birthday, age } = req.query;
+  const { name, surname, birthdayYear: birthday, age, page, limit } = req.query;
 
   const authors = await getAuthorsByParams({
     surname,
     name,
     birthday,
     age,
+    page,
+    limit
   })
-
-  if (!authors) {
-    return next(new AppError("Invalid params", 500))
-  }
 
   return res.status(200).send({
     status: "success",
@@ -46,10 +44,6 @@ const createAuthor = catchAsync(async (req, res, next) => {
     age
   });
 
-  if (!id) {
-    return next(new AppError("Couldn't create author", 500));
-  }
-
   return res.status(200).send({
     status: "success",
     data: id
@@ -62,7 +56,7 @@ const deleteAuthor = catchAsync(async (req, res, next) => {
   const author = await getAuthorsByParams({ id })
 
   if (author.length === 0) {
-    return next(new AppError("There is no author with this id", 500))
+    return next(new AppError("There is no author with this id", 400))
   }
 
   await removeAuthor(id)
@@ -73,4 +67,15 @@ const deleteAuthor = catchAsync(async (req, res, next) => {
   })
 })
 
-module.exports = { getAuthors, getAuthorById, createAuthor, deleteAuthor }
+const patchAuthor = catchAsync(async (req, res, next) => {
+  const { id, author } = req.body
+
+  const authorRes = await updateAuthor(id, author);
+
+  return res.status(200).send({
+    status: "success",
+    data: authorRes
+  })
+})
+
+module.exports = { getAuthors, getAuthorById, createAuthor, deleteAuthor, patchAuthor }

@@ -1,4 +1,4 @@
-const { getBooksByParams, insertBook, removeBook } = require("../models/booksModel");
+const { getBooksByParams, insertBook, removeBook, updateBook } = require("../models/booksModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
@@ -18,17 +18,15 @@ const getBooksById = catchAsync(async (req, res, next) => {
 });
 
 const getBooks = catchAsync(async (req, res, next) => {
-  const { title, authorId, publishYear } = req.query;
+  const { title, authorId, publishYear, limit, page } = req.query;
 
   const books = await getBooksByParams({
     title,
     authorId,
     publishYear,
+    limit,
+    page
   });
-
-  if (!books) {
-    return next(new AppError('Invalid params', 500));
-  }
 
   return res.status(200).send({
     status: "success",
@@ -43,10 +41,6 @@ const createBook = catchAsync(async (req, res, next) => {
     authorId,
     publishDate,
   });
-
-  if (!id) {
-    return next(new AppError("Couldn't create book", 500));
-  }
 
   return res.status(200).send({
     status: "success",
@@ -71,4 +65,15 @@ const deleteBook = catchAsync(async (req, res, next) => {
   })
 })
 
-module.exports = { getBooksById, getBooks, createBook, deleteBook }
+const patchBook = catchAsync(async (req, res, next) => {
+  const { id, book } = req.body;
+
+  const bookRes = await updateBook(id, book);
+
+  return res.status(200).send({
+    status: "success",
+    data: bookRes,
+  })
+})
+
+module.exports = { getBooksById, getBooks, createBook, deleteBook, patchBook }

@@ -1,4 +1,5 @@
 const path = require('path');
+const AppError = require('../utils/appError');
 const initOptions = {
   // initialization options;
   connect(e) {
@@ -18,6 +19,11 @@ const sql = (file) => {
   return new pgp.QueryFile(fullPath, { minify: true });
 }
 
+const PgErrors = {
+  FOREIGN_KEY_VIOLATION: 23503,
+  EXEC_CONSTRAINTS: 23502
+}
+
 module.exports = {
-  pgp, db, sql
+  pgp, db, sql, PgErrors
 }

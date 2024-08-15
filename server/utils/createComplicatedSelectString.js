@@ -7,28 +7,27 @@
  */
 const createCompicatedQuerySelectString = (paramsCommands, params) => {
   let queryString = "";
-  let i = 0;
-  let paramsLength = 0;
+
   for (const f of Object.entries(params)) {
-    if (f[1] != undefined && f[1] != null && f[1] != '') {
-      paramsLength++
-    }
-  }
-  if (paramsLength !== 0) {
-    queryString += "where ";
-  }
-  for (const f of Object.entries(params)) {
-    if (f[1] == undefined || f[1] == null || f[1] == '') {
+    if (f[1] == undefined || f[1] == null || f[1] == '' || paramsCommands[f[0]] === undefined) {
       delete params[f[0]]
     }
   }
+  const paramsLength = Object.entries(params).length;
+
+  if (paramsLength === 0) {
+    return queryString
+  }
+  queryString += " where "
+
+  let i = 0;
   for (const f of Object.entries(params)) {
-    if (i === paramsLength - 1) {
+    i++;
+    if (i === paramsLength) {
       queryString += paramsCommands[f[0]];
       break
     }
     queryString += paramsCommands[f[0]] + " and ";
-    i++;
   }
   return queryString
 }
