@@ -9,7 +9,7 @@ const createCompicatedQuerySelectString = require("../utils/createComplicatedSel
  * @param {string} params.name - author name to get
  * @param {string} params.surname - author surname to get, can be empty
  * @param {number} params.birthday - year when author was born
- * @param {age} params.age - age of author
+ * @param {number} params.age - age of author
  * @param {number} [params.page = 1] - query page
  * @param {number} [params.limit = 10] - query limit per page
  */

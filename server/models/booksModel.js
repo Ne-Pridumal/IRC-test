@@ -79,8 +79,12 @@ const insertBook = async (book) => {
   }
   try {
     return await db.one(query)
-  } catch (e) {
-    throw new AppError("transaction error", 500)
+  }
+  catch (e) {
+    if (e.code === PgErrors.EXEC_CONSTRAINTS) {
+      throw new AppError("Wrong params", 400)
+    }
+    throw new AppError("Transaction error", 500)
   }
 }
 
